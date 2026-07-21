@@ -1,0 +1,3 @@
+import {spawn} from "node:child_process";
+const win=process.platform==="win32";const server=spawn(win?"node.exe":"node",["node_modules/next/dist/bin/next","start","-H","127.0.0.1"],{stdio:"ignore"});
+try{for(let i=0;i<40;i++){try{if((await fetch("http://127.0.0.1:3000/demo-target")).ok)break}catch{}await new Promise(r=>setTimeout(r,250))}const test=spawn(win?"node.exe":"node",["node_modules/@playwright/test/cli.js","test","--config=playwright.smoke.config.ts"],{stdio:"inherit",env:process.env});const code=await new Promise(r=>test.on("exit",r));if(code)process.exitCode=Number(code)}finally{server.kill()}

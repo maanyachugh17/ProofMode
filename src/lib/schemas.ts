@@ -1,0 +1,9 @@
+import { z } from "zod";
+export const actions=["goto","click","fill","press","wait","assert_text","assert_url","assert_visible","screenshot"] as const;
+export const stepSchema=z.object({id:z.string().min(1),action:z.enum(actions),target:z.string().optional(),value:z.string().optional(),description:z.string(),expectedResult:z.string().optional()});
+export const planSchema=z.object({claim:z.string(),interpretation:z.string(),assumptions:z.array(z.string()),successCriteria:z.array(z.string()),steps:z.array(stepSchema).min(1).max(18)});
+export const evidenceSchema=z.object({stepId:z.string(),status:z.enum(["passed","failed","skipped"]),description:z.string(),observedResult:z.string(),currentUrl:z.string(),screenshotPath:z.string().optional(),consoleErrors:z.array(z.string()),durationMs:z.number(),error:z.string().optional()});
+export const verdictSchema=z.object({status:z.enum(["verified","failed","partial","inconclusive"]),confidence:z.number().min(0).max(100),summary:z.string(),evidenceFor:z.array(z.string()),evidenceAgainst:z.array(z.string()),reproductionSteps:z.array(z.string()),likelyRootCause:z.string().optional(),suggestedFix:z.string().optional()});
+export const requestSchema=z.object({url:z.string().url().refine(v=>["http:","https:"].includes(new URL(v).protocol),"Only HTTP(S) URLs are permitted"),claims:z.array(z.string().min(3).max(500)).min(1).max(3),instructions:z.string().max(1500).optional(),sample:z.boolean().optional()});
+export type TestPlan=z.infer<typeof planSchema>; export type StepEvidence=z.infer<typeof evidenceSchema>; export type ClaimVerdict=z.infer<typeof verdictSchema>;
+export function formatVerdict(s:ClaimVerdict["status"]){return s==="partial"?"Partial":s[0].toUpperCase()+s.slice(1)}

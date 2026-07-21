@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";import { readFile } from "node:fs/promises";import path from "node:path";
+export async function GET(_:Request,{params}:{params:Promise<{run:string,file:string}>}){const {run,file}=await params;if(!/^[\w-]+$/.test(run)||!/^[\w.-]+$/.test(file))return new NextResponse("Invalid",{status:400});try{return new NextResponse(await readFile(path.join(process.cwd(),"artifacts","runs",run,"screenshots",file)),{headers:{"content-type":"image/png"}})}catch{return new NextResponse("Not found",{status:404})}}

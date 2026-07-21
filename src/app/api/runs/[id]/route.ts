@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { load } from "@/lib/storage";export async function GET(_:Request,{params}:{params:Promise<{id:string}>}){try{return NextResponse.json(await load((await params).id))}catch{return NextResponse.json({error:"Run not found"},{status:404})}}
